@@ -5,27 +5,38 @@ describe('Formulário - Acessar e preencher formulário com sucesso', () => {
         cy.title().should('be.equal', 'Central de Atendimento ao Cliente TAT')
     });
 
-    it('CTO2: Preenche campos obrigatórios e envia o formulário', () => {
-        cy.fill_mandatory_fields();
-        cy.get(SELECTORS.form_CAC_TAT.buttons.submit).click()
-        cy.get(SELECTORS.form_CAC_TAT.messages.sucess).should('be.visible')
-    });
+     Cypress._.times(5, () => {
+        it('CTO2: Preenche campos obrigatórios e envia o formulário', () => {
+            cy.clock()
+            cy.fill_mandatory_fields();
+            cy.get(SELECTORS.form_CAC_TAT.buttons.submit).click()
+            cy.get(SELECTORS.form_CAC_TAT.messages.sucess).should('be.visible')
 
-    it('CT03: Preencher campos opcionais e enviar formulário', () => {
-        cy.fill_mandatory_fields();
-        cy.get(SELECTORS.form_CAC_TAT.selects.product).select('Mentoria').should('have.value', 'mentoria')
-        cy.get(SELECTORS.form_CAC_TAT.selects.service_type).check('feedback').should('be.checked')
-        cy.get(SELECTORS.form_CAC_TAT.selects.contact_options).check('email').should('be.checked')
-        
-        cy.fixture('example-jpg.jpg').as('sampleFile')
-        cy.get(SELECTORS.form_CAC_TAT.form_fields.upload_file).selectFile('@sampleFile', { action: 'drag-drop'}) // simula o arrastar e soltar o arquivo
-            .should(input => {
-                console.log(input)
-                expect(input[0].files[0].name).to.equal('example-jpg.jpg')
-            })
+            cy.tick(3000)
+            cy.get(SELECTORS.form_CAC_TAT.messages.sucess).should('not.be.visible')
+        });
 
-        cy.get(SELECTORS.form_CAC_TAT.buttons.submit).click()
-        cy.get(SELECTORS.form_CAC_TAT.messages.sucess).should('be.visible')
+    })
+
+        it('CT03: Preencher campos opcionais e enviar formulário', () => {
+            cy.clock()
+            cy.fill_mandatory_fields();
+            cy.get(SELECTORS.form_CAC_TAT.selects.product).select('Mentoria').should('have.value', 'mentoria')
+            cy.get(SELECTORS.form_CAC_TAT.selects.service_type).check('feedback').should('be.checked')
+            cy.get(SELECTORS.form_CAC_TAT.selects.contact_options).check('email').should('be.checked')
+            
+            cy.fixture('example-jpg.jpg').as('sampleFile')
+            cy.get(SELECTORS.form_CAC_TAT.form_fields.upload_file).selectFile('@sampleFile', { action: 'drag-drop'}) // simula o arrastar e soltar o arquivo
+                .should(input => {
+                    console.log(input)
+                    expect(input[0].files[0].name).to.equal('example-jpg.jpg')
+                })
+
+            cy.get(SELECTORS.form_CAC_TAT.buttons.submit).click()
+            cy.get(SELECTORS.form_CAC_TAT.messages.sucess).should('be.visible')
+
+            cy.tick(3000)
+            cy.get(SELECTORS.form_CAC_TAT.messages.sucess).should('not.be.visible')
     });
 });
 
@@ -43,8 +54,12 @@ describe('Formulário - Validação de campos obrigatórios e opcionais', () => 
     });
 
     it('CT02: Enviar formulário com nenhum campo preenchido', () => {
+        cy.clock()
         cy.get(SELECTORS.form_CAC_TAT.buttons.submit).click()
         cy.get(SELECTORS.form_CAC_TAT.messages.error).should('be.visible')
+
+        cy.tick(3000)
+        cy.get(SELECTORS.form_CAC_TAT.messages.error).should('not.be.visible')
     });
 
     it('CT03: Preencher campo nome com valor inválido', () => {
@@ -56,6 +71,7 @@ describe('Formulário - Validação de campos obrigatórios e opcionais', () => 
     });
 
     it('CT05: Exibe mensagem de erro ao preencher campo email com formatação inválida', () => {
+        cy.clock()
         cy.get(SELECTORS.form_CAC_TAT.form_fields.name).type("Matilde")
         cy.get(SELECTORS.form_CAC_TAT.form_fields.lastname).type("do Teste")
         cy.get(SELECTORS.form_CAC_TAT.form_fields.email).type("matilde.testes$tuamaeaquelaursa")
@@ -63,6 +79,9 @@ describe('Formulário - Validação de campos obrigatórios e opcionais', () => 
 
         cy.get(SELECTORS.form_CAC_TAT.buttons.submit).click()
         cy.get(SELECTORS.form_CAC_TAT.messages.error).should('be.visible')
+
+        cy.tick(3000)
+        cy.get(SELECTORS.form_CAC_TAT.messages.error).should('not.be.visible')
     });
 
     it('CT06: Preencher campo telefone com valor inválido', () => {
@@ -70,10 +89,14 @@ describe('Formulário - Validação de campos obrigatórios e opcionais', () => 
     });
 
     it('CT07: Exibe mensagem de erro quando telefone se torna obrigatório mas não é preenchido', () => {
+        cy.clock()
         cy.fill_mandatory_fields();
         cy.get(SELECTORS.form_CAC_TAT.selects.contact_options).check('phone').should('be.checked')
         cy.get(SELECTORS.form_CAC_TAT.buttons.submit).click()
         cy.get(SELECTORS.form_CAC_TAT.messages.error).should('be.visible')
+
+        cy.tick(3000)
+        cy.get(SELECTORS.form_CAC_TAT.messages.error).should('not.be.visible')
     });
 
     it('CT08: Marcar cada tipo de atendimento', () => {
@@ -93,27 +116,30 @@ describe('Formulário - Upload de arquivos válidos', () => {
 
     it('CT01: Permitir upload de arquivo válido', () => {
         cy.fixture('example-jpg.jpg').as('sampleFileJPG')
-        cy.get(SELECTORS.form_CAC_TAT.form_fields.upload_file).selectFile('@sampleFileJPG', { action: 'drag-drop'}) // simula o arrastar e soltar o arquivo
+        cy.get(SELECTORS.form_CAC_TAT.form_fields.upload_file).selectFile('@sampleFileJPG') // simula o arrastar e soltar o arquivo
             .should(input => {
+                console.log(input)
                 expect(input[0].files[0].name).to.equal('example-jpg.jpg')
             })
 
         cy.fixture('example-pdf.pdf').as('sampleFilePDF')
-        cy.get(SELECTORS.form_CAC_TAT.form_fields.upload_file).selectFile('@sampleFilePDF', { action: 'drag-drop'}) // simula o arrastar e soltar o arquivo
+        cy.get(SELECTORS.form_CAC_TAT.form_fields.upload_file).selectFile('@sampleFilePDF') // simula o arrastar e soltar o arquivo
             .should(input => {
+                console.log(input)
                 expect(input[0].files[0].name).to.equal('example-pdf.pdf')
             })
          
         cy.fixture('example-png.png').as('sampleFilePNG')
-        cy.get(SELECTORS.form_CAC_TAT.form_fields.upload_file).selectFile('@sampleFilePNG', { action: 'drag-drop'}) // simula o arrastar e soltar o arquivo
+        cy.get(SELECTORS.form_CAC_TAT.form_fields.upload_file).selectFile('@sampleFilePNG') // simula o arrastar e soltar o arquivo
             .should(input => {
+                console.log(input)
                 expect(input[0].files[0].name).to.equal('example-png.png')
             })  
     });
 
     it('CT02: Não permitir upload de arquivo com tipo inválido', () => {
         cy.fixture('example-json.json').as('sampleFileJSON')
-        cy.get(SELECTORS.form_CAC_TAT.form_fields.upload_file).selectFile('@sampleFileJSON', { action: 'drag-drop'}) // simula o arrastar e soltar o arquivo
+        cy.get(SELECTORS.form_CAC_TAT.form_fields.upload_file).selectFile('@sampleFileJSON') // simula o arrastar e soltar o arquivo
             .should(input => {
                 console.log(input)
                  expect(input[0].files.length).to.equal(0);
@@ -136,6 +162,15 @@ describe('Formulário - Link Política de Privacidade', () => {
         cy.contains('a', 'Política de Privacidade').should('have.attr', 'target', '_blank')
             .and('have.attr', 'href', 'privacy.html')
         
+    });
+});
+
+describe('DESAFIO FINAL: ENCONTRAR O GATO', () => {
+    it('ENCONTRE O GATO 🐈', () => {
+        cy.get(SELECTORS.mistery_cat).should('not.be.visible')
+            .invoke('show')
+            .should('be.visible')
+            .and('contain', '🐈')
     });
 });
 

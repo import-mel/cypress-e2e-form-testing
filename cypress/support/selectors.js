@@ -27,5 +27,7 @@ export const SELECTORS = {
 
     privacy_and_policy: {
         title: '#title'
-    }
+    },
+
+    mistery_cat: '#cat'
 };
