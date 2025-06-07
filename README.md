@@ -84,6 +84,7 @@ npm run cy:open:mobile
 ## Estrutura do Projeto
 
 ```bash
+👾 cypress-e2e-form-testing
 ├── .github/workflows/
 │   └── ci.yml                    # Configuração de integração contínua (CI) com GitHub Actions
 ├── cypress/
